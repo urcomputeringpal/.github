@@ -1,0 +1,11 @@
+{
+    "name": "docker 0.0.1",
+    "description": "Build Docker image on each push. Automatically publish semver tags. Keeps PR caches warm.",
+    "iconName": "docker-icon",
+    "categories": [
+        "Dockerfile"
+    ],
+    "filePatterns": [
+        "Dockerfile"
+    ]
+}
