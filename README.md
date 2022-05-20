@@ -26,6 +26,6 @@ jobs:
     if: |
       (
         github.event_name == 'schedule' ||
-        endsWith(github.ref, github.event.repository.default_branch)
+        github.event.workflow_run.head_branch == github.event.repository.default_branch
       )
 ```
