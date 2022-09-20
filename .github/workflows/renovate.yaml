@@ -11,10 +11,7 @@ on:
       RENOVATE_APP_ID:
         required: true
     inputs:
-      username:
-        required: true
-        type: string
-      git_author:
+      renovate_app_slug:
         required: true
         type: string
   schedule:
