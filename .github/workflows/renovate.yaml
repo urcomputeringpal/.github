@@ -1,0 +1,38 @@
+name: Renovate
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      RENOVATE_APP_PEM:
+        required: true
+      RENOVATE_APP_ID:
+        required: true
+  schedule:
+    - cron:  '0 */4 * * *'
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get token
+        id: get_token
+        uses: machine-learning-apps/actions-app-token@master
+        with:
+          APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}
+          APP_ID: ${{ secrets.RENOVATE_APP_ID }}
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
+      - name: Fetch config
+        run: |
+          test -f .github/renovate.json || curl -L https://raw.githubusercontent.com/$GITHUB_ACTION_REPOSITORY/main/.github/renovate.json > .github/renovate.json
+      - name: Renovate
+        uses: renovatebot/github-action@d5c9b2e89bd31cb4b302b69e60ecb600a9894151 # tag=v32.199.1
+        env:
+          LOG_LEVEL: 'debug'
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+        with:
+          configurationFile: .github/renovate.json
+          token: 'x-access-token:${{ steps.get_token.outputs.app_token }}'
