@@ -10,6 +10,13 @@ on:
         required: true
       RENOVATE_APP_ID:
         required: true
+    inputs:
+      username:
+        required: true
+        type: string
+      git_author:
+        required: true
+        type: string
   schedule:
     - cron:  '0 */4 * * *'
 jobs:
@@ -33,6 +40,8 @@ jobs:
         env:
           LOG_LEVEL: 'debug'
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_USERNAME: "${{ inputs.renovate_app_slug }}[bot]"
+          RENOVATE_GIT_AUTHOR: "${{ inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug }}[bot]@users.noreply.github.com>"
         with:
           configurationFile: .github/renovate.json
           token: 'x-access-token:${{ steps.get_token.outputs.app_token }}'
