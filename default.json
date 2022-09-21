@@ -26,7 +26,8 @@
     ],
     "rebaseWhen": "conflicted",
     "prFooter": "",
-    "prHeader": "Greetings. Auto-update behavior is configured via `renovate.json` in this repo, which inherits defaults from https://github.com/cased/.github.",
+    "prHeader": "Greetings. Auto-update behavior is configured via `renovate.json` in this repo, which inherits defaults from the `.github` repo in this account.",
+    "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
     "packageRules": [
         {
             "updateTypes": [
