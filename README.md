@@ -29,3 +29,26 @@ jobs:
         github.event.workflow_run.head_branch == github.event.repository.default_branch
       )
 ```
+
+### Renovate
+
+Like dependabot, but customizable. Requires a private GitHub App be installed to grant the permissions necessary to update Actions workflows etc. [Create a new app](https://docs.github.com/en/developers/apps/creating-a-github-app) and configure the app permissions and your renovate.js as described in the [Renovate documentation](https://docs.renovatebot.com/modules/platform/github/#running-as-a-github-app).
+
+```yaml
+name: renovate
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
+  schedule:
+    - cron:  '0 */6 * * *'
+jobs:
+  renovate:
+    uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
+    with:
+      renovate_app_slug: your-app-name
+    secrets:
+      RENOVATE_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
+      RENOVATE_APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}
+```
