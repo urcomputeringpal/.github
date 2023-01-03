@@ -1,97 +1,71 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "description": "default renovate rules from https://github.com/urcomputeringpal/.github/blob/main/default.json",
-    "extends": [
-        "config:base",
-        ":automergeDisabled",
-        ":disableDependencyDashboard",
-        ":maintainLockFilesWeekly",
-        ":semanticCommits",
-        ":semanticCommitScope(deps)",
-        "docker:enableMajor",
-        "docker:pinDigests",
-        "group:linters",
-        "helpers:pinGitHubActionDigests",
-        "preview:dockerCompose",
-        "preview:dockerVersions",
-        ":prHourlyLimitNone",
-        ":prConcurrentLimitNone"
-    ],
-    "pin": {
-        "automerge": false
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "default renovate rules from https://github.com/urcomputeringpal/.github/blob/main/default.json",
+  "extends": [
+    "config:base",
+    ":automergeDisabled",
+    ":disableDependencyDashboard",
+    ":maintainLockFilesWeekly",
+    ":semanticCommits",
+    ":semanticCommitScope(deps)",
+    "docker:enableMajor",
+    "docker:pinDigests",
+    "group:linters",
+    "helpers:pinGitHubActionDigests",
+    "preview:dockerCompose",
+    "preview:dockerVersions",
+    ":prHourlyLimitNone",
+    ":prConcurrentLimitNone"
+  ],
+  "pin": {
+    "automerge": false
+  },
+  "labels": ["renovate", "{{datasource}}"],
+  "rebaseWhen": "conflicted",
+  "prFooter": "",
+  "prHeader": "Greetings. Auto-update behavior is configured via `renovate.js` in this repo, which inherits defaults from the `.github` repo in this account.",
+  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
+  "packageRules": [
+    {
+      "updateTypes": ["major"],
+      "addLabels": ["major"]
     },
-    "labels": [
-        "renovate",
-        "{{datasource}}"
-    ],
-    "rebaseWhen": "conflicted",
-    "prFooter": "",
-    "prHeader": "Greetings. Auto-update behavior is configured via `renovate.json` in this repo, which inherits defaults from the `.github` repo in this account.",
-    "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
-    "packageRules": [
-        {
-            "updateTypes": [
-                "major"
-            ],
-            "addLabels": [
-                "major"
-            ]
-        },
-        {
-            "updateTypes": [
-                "minor"
-            ],
-            "addLabels": [
-                "minor"
-            ]
-        },
-        {
-            "updateTypes": [
-                "patch"
-            ],
-            "addLabels": [
-                "patch"
-            ]
-        }
-    ],
-    "regexManagers": [
-        {
-            "fileMatch": [
-                "\\.yaml$",
-                "\\.yml$"
-            ],
-            "datasourceTemplate": "github-releases",
-            "matchStrings": [
-                "(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"
-            ]
-        },
-        {
-            "fileMatch": [
-                ".+"
-            ],
-            "datasourceTemplate": "github-releases",
-            "matchStrings": [
-                "https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
-            ]
-        },
-        {
-            "fileMatch": [
-                ".+"
-            ],
-            "datasourceTemplate": "github-releases",
-            "matchStrings": [
-                "https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/"
-            ]
-        },
-        {
-            "fileMatch": [
-                ".+"
-            ],
-            "matchStrings": [
-                "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_(version|VERSION|value)(:|=)\"?(?<currentValue>.+?)\"?\\s",
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*_?(version|VERSION|value)(:|=) ?(?<currentValue>.*)\\s"
-            ],
-            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
-        }
-    ]
+    {
+      "updateTypes": ["minor"],
+      "addLabels": ["minor"]
+    },
+    {
+      "updateTypes": ["patch"],
+      "addLabels": ["patch"]
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["\\.yaml$", "\\.yml$"],
+      "datasourceTemplate": "github-releases",
+      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"]
+    },
+    {
+      "fileMatch": [".+"],
+      "datasourceTemplate": "github-releases",
+      "matchStrings": [
+        "https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
+      ]
+    },
+    {
+      "fileMatch": [".+"],
+      "datasourceTemplate": "github-releases",
+      "matchStrings": [
+        "https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/"
+      ]
+    },
+    {
+      "fileMatch": [".+"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_(version|VERSION|value)(:|=)\"?(?<currentValue>.+?)\"?\\s",
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*_?(version|VERSION|value)(:|=) ?(?<currentValue>.*)\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ]
 }
