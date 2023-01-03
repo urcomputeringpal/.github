@@ -12,8 +12,9 @@ on:
         required: true
     inputs:
       renovate_app_slug:
-        required: true
+        required: false
         type: string
+        default: ur-renovate
       configuration_file:
         required: false
         type: string
