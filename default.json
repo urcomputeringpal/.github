@@ -17,6 +17,7 @@
     ":prHourlyLimitNone",
     ":prConcurrentLimitNone"
   ],
+  "ignorePresets": [":ignoreModulesAndTests"],
   "pin": {
     "automerge": false
   },
