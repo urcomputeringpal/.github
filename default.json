@@ -48,7 +48,7 @@
     {
       "fileMatch": ["\\.yaml$", "\\.yml$"],
       "datasourceTemplate": "docker",
-      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"]
+      "matchStrings": ["(?<depName>(ghcr|quay)\\.io\\/.+):(?<currentValue>.+)"]
     },
     {
       "fileMatch": [".+"],
