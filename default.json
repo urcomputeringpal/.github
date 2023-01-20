@@ -46,6 +46,11 @@
       "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"]
     },
     {
+      "fileMatch": ["\\.yaml$", "\\.yml$"],
+      "datasourceTemplate": "docker",
+      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"]
+    },
+    {
       "fileMatch": [".+"],
       "datasourceTemplate": "github-releases",
       "matchStrings": [
