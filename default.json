@@ -50,10 +50,9 @@
     {
       "fileMatch": ["\\.yaml$", "\\.yml$"],
       "datasourceTemplate": "docker",
-      "matchStrings": ["ghcr\\.io\\/(?<depName>.+):(?<currentValue>.+)"],
+      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"],
       "autoReplaceStringTemplate": "{{depName}}{{#if newValue}}:{{newValue}}{{/if}}{{#if newDigest}}@{{newDigest}}{{/if}}",
-      "versioningTemplate": "loose",
-      "registryUrlTemplate": "https://ghcr.io"
+      "versioningTemplate": "docker"
     },
     {
       "fileMatch": [".+"],
