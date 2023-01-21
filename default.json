@@ -44,12 +44,12 @@
     {
       "fileMatch": ["\\.yaml$", "\\.yml$"],
       "datasourceTemplate": "github-releases",
-      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)"]
+      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>[a-z0-9-\/]+):(?<currentValue>.+)"]
     },
     {
       "fileMatch": ["\\.yaml$", "\\.yml$"],
       "datasourceTemplate": "docker",
-      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>.+):(?<currentValue>.+)(@(?<currentDigest>sha256:[a-f0-9]+))?"],
+      "matchStrings": ["(ghcr|quay)\\.io\\/(?<depName>[a-z0-9-\/]+):(?<currentValue>[a-z0-9-]+)(@(?<currentDigest>sha256:[a-f0-9]+))?"],
       "versioningTemplate": "docker"
     },
     {
