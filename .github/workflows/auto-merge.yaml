@@ -16,8 +16,10 @@ on:
         default: SQUASH
         type: string
       app_id:
+        type: string
         required: false
       private_key:
+        type: string
         required: false
     secrets:
       token:
