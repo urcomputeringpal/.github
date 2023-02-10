@@ -2,9 +2,7 @@ name: Enable auto-merge
 on:
   pull_request:
     types:
-      - opened
       - labeled
-      - synchronize
   workflow_call:
     inputs:
       pullRequestId:
@@ -23,6 +21,7 @@ on:
         required: false
 jobs:
   enable:
+    name: Enable auto-merge
     runs-on: ubuntu-latest
     steps:
       - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
