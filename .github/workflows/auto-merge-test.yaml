@@ -1,0 +1,16 @@
+name: Enable auto-merge
+on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - synchronize
+jobs:
+  enable:
+    name: Enable auto-merge
+    if: |
+      ( github.event.action == 'labeled' && github.event.label.name == 'deploy:auto-merge' ) ||
+      ( github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy:auto-merge') )
+    uses: ./.github/workflows/auto-merge.yaml
+    with:
+      pullRequestId: ${{ github.event.pull_request.node_id }}
