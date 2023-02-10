@@ -51,8 +51,8 @@ jobs:
               }
             }
 
-          pullrequestid: ${{ inputs.pullRequestId }}
-          mergemethod: ${{ inputs.mergeMethod }}
+          pullrequestid: ${{ inputs.pullRequestId || github.event.pull_request.node_id }}
+          mergemethod: ${{ inputs.mergeMethod || 'SQUASH' }}
         env:
           GITHUB_TOKEN: ${{ secrets.token || inputs.token || github.token }}
       - run: "echo '${{ steps.enablePullRequestAutoMerge.outputs.data }}'"
