@@ -2,7 +2,9 @@ name: Enable auto-merge
 on:
   pull_request:
     types:
+      - opened
       - labeled
+      - synchronize
   workflow_call:
     inputs:
       pullRequestId:
