@@ -15,9 +15,12 @@ on:
         description: one of https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
         default: SQUASH
         type: string
-      token:
-        required: false
+      app_id:
         type: string
+        required: false
+      private_key:
+        type: string
+        required: false
     secrets:
       token:
         required: false
@@ -26,6 +29,13 @@ jobs:
     name: Enable auto-merge
     runs-on: ubuntu-latest
     steps:
+      - uses: tibdex/github-app-token@v1.8.0
+        if: inputs.app_id != ''
+        id: token
+        with:
+          app_id: ${{ inputs.app_id }}
+          private_key: ${{ inputs.private_key }}
+
       - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
         id: enablePullRequestAutoMerge
         with:
@@ -55,5 +65,5 @@ jobs:
           pullrequestid: ${{ inputs.pullRequestId || github.event.pull_request.node_id }}
           mergemethod: ${{ inputs.mergeMethod || 'SQUASH' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.token || inputs.token || github.token }}
+          GITHUB_TOKEN: ${{ secrets.token || steps.token.outputs.token || github.token }}
       - run: "echo '${{ steps.enablePullRequestAutoMerge.outputs.data }}'"
