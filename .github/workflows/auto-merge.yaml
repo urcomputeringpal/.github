@@ -1,5 +1,10 @@
-name: Automatically merge the default branch into PRs with auto-merge enabled
+name: Enable auto-merge
 on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - synchronize
   workflow_call:
     inputs:
       pullRequestId:
@@ -10,11 +15,15 @@ on:
         description: one of https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
         default: SQUASH
         type: string
+      token:
+        required: false
+        type: string
     secrets:
       token:
-        required: true
+        required: false
 jobs:
   enable:
+    name: Enable auto-merge
     runs-on: ubuntu-latest
     steps:
       - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
@@ -43,8 +52,8 @@ jobs:
               }
             }
 
-          pullrequestid: ${{ inputs.pullRequestId }}
-          mergemethod: ${{ inputs.mergeMethod }}
+          pullrequestid: ${{ inputs.pullRequestId || github.event.pull_request.node_id }}
+          mergemethod: ${{ inputs.mergeMethod || 'SQUASH' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}
+          GITHUB_TOKEN: ${{ secrets.token || inputs.token || github.token }}
       - run: "echo '${{ steps.enablePullRequestAutoMerge.outputs.data }}'"
