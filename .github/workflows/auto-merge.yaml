@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
-        if: secrets.token != ""
+        id: enablePullRequestAutoMerge
         with:
           query: |
             mutation(
@@ -54,66 +54,5 @@ jobs:
           pullrequestid: ${{ inputs.pullRequestId }}
           mergemethod: ${{ inputs.mergeMethod }}
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}
-
-      - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
-        if: inputs.token != ""
-        with:
-          query: |
-            mutation(
-              $pullrequestid: ID!,
-              $mergemethod: PullRequestMergeMethod!
-            ) {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: $pullrequestid,
-                  mergeMethod: $mergemethod
-                }) {
-                clientMutationId
-                pullRequest {
-                  id
-                  state
-                  autoMergeRequest {
-                    enabledAt
-                    enabledBy {
-                      login
-                    }
-                  }
-                }
-              }
-            }
-
-          pullrequestid: ${{ inputs.pullRequestId }}
-          mergemethod: ${{ inputs.mergeMethod }}
-        env:
-          GITHUB_TOKEN: ${{ inputs.token }}
-
-      - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
-        if: inputs.token == "" && secrets.token == ""
-        with:
-          query: |
-            mutation(
-              $pullrequestid: ID!,
-              $mergemethod: PullRequestMergeMethod!
-            ) {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: $pullrequestid,
-                  mergeMethod: $mergemethod
-                }) {
-                clientMutationId
-                pullRequest {
-                  id
-                  state
-                  autoMergeRequest {
-                    enabledAt
-                    enabledBy {
-                      login
-                    }
-                  }
-                }
-              }
-            }
-
-          pullrequestid: ${{ inputs.pullRequestId }}
-          mergemethod: ${{ inputs.mergeMethod }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.token || inputs.token || github.token }}
+      - run: "echo '${{ steps.enablePullRequestAutoMerge.outputs.data }}'"
