@@ -1,5 +1,10 @@
 name: Automatically merge the default branch into PRs with auto-merge enabled
 on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - synchronize
   workflow_call:
     inputs:
       pullRequestId:
