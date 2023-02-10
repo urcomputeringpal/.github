@@ -15,12 +15,12 @@ on:
         description: one of https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
         default: SQUASH
         type: string
-    secrets:
-      token:
-        required: false
       app_id:
         required: false
       private_key:
+        required: false
+    secrets:
+      token:
         required: false
 jobs:
   enable:
@@ -28,11 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: tibdex/github-app-token@v1.8.0
-        if: secrets.app_id != ""
+        if: inputs.app_id != ""
         id: token
         with:
-          app_id: ${{ secrets.app_id }}
-          private_key: ${{ secrets.private_key }}
+          app_id: ${{ inputs.app_id }}
+          private_key: ${{ inputs.private_key }}
 
       - uses: octokit/graphql-action@a60f9ba870efadf6bf59e01296e9061052a31b39 # tag=v2.2.23
         id: enablePullRequestAutoMerge
