@@ -11,11 +11,12 @@ on:
       RENOVATE_APP_ID:
         required: true
     inputs:
-      dry_run:
-        required: false
-        type: boolean
-        default: false
       dry_run_branch:
+        description: |
+          Validate the config on this branch, merged on top of the config from the default branch.
+          Requires that config be in the same location on each branch.
+          Requires that config be stored in a default configuration location.
+          https://docs.renovatebot.com/configuration-options/#configuration-options
         required: false
         type: string
       renovate_app_slug:
@@ -29,9 +30,8 @@ on:
     - cron: '0 */4 * * *'
 jobs:
   renovate:
-    name: Update dependencies with renovate
+    name: ${{ inputs.dry_run_branch == '' && 'Update' || 'Validate' }}
     runs-on: ubuntu-latest
-    if: inputs.dry_run_branch == ''
     timeout-minutes: 5
     steps:
       - name: Get token
@@ -42,7 +42,9 @@ jobs:
           private_key: ${{ secrets.RENOVATE_APP_PEM }}
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+    
       - name: Renovate
+        if: inputs.dry_run_branch == ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
         env:
           LOG_LEVEL: 'debug'
@@ -59,22 +61,8 @@ jobs:
           configurationFile: ${{ inputs.configuration_file }}
           token: 'x-access-token:${{ steps.token.outputs.token }}'
 
-  dry_run:
-    name: Validate renovate config
-    runs-on: ubuntu-latest
-    if: inputs.dry_run_branch != ''
-    timeout-minutes: 5
-    steps:
-      - name: Get token
-        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92 # v1.8.0
-        id: token
-        with:
-          app_id: ${{ secrets.RENOVATE_APP_ID }}
-          private_key: ${{ secrets.RENOVATE_APP_PEM }}
-      - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
-
       - name: Dry run
+        if: inputs.dry_run_branch != ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
         env:
           LOG_LEVEL: 'debug'
