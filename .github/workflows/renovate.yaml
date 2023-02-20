@@ -29,7 +29,9 @@ on:
     - cron: '0 */4 * * *'
 jobs:
   renovate:
+    name: Update dependencies with renovate
     runs-on: ubuntu-latest
+    if: inputs.dry_run_branch == ''
     timeout-minutes: 5
     steps:
       - name: Get token
@@ -42,7 +44,6 @@ jobs:
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Renovate
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
-        if: inputs.dry_run_branch == ''
         env:
           LOG_LEVEL: 'debug'
           RENOVATE_REPOSITORIES: ${{ github.repository }}
@@ -58,9 +59,23 @@ jobs:
           configurationFile: ${{ inputs.configuration_file }}
           token: 'x-access-token:${{ steps.token.outputs.token }}'
 
-      - name: Renovate validate config
+  dry_run:
+    name: Validate renovate config
+    runs-on: ubuntu-latest
+    if: inputs.dry_run_branch != ''
+    timeout-minutes: 5
+    steps:
+      - name: Get token
+        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92 # v1.8.0
+        id: token
+        with:
+          app_id: ${{ secrets.RENOVATE_APP_ID }}
+          private_key: ${{ secrets.RENOVATE_APP_PEM }}
+      - name: Checkout
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+
+      - name: Dry run
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
-        if: inputs.dry_run_branch != ''
         env:
           LOG_LEVEL: 'debug'
           RENOVATE_REPOSITORIES: ${{ github.repository }}
