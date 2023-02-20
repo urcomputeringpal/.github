@@ -32,22 +32,44 @@ jobs:
 
 ### Renovate
 
-Like dependabot, but customizable. Requires a private GitHub App be installed to grant the permissions necessary to update Actions workflows etc. [Create a new app](https://docs.github.com/en/developers/apps/creating-a-github-app) and configure the app permissions and your renovate.js as described in the [Renovate documentation](https://docs.renovatebot.com/modules/platform/github/#running-as-a-github-app).
+Like dependabot, but customizable. Requires a private GitHub App be installed to grant the permissions necessary to update Actions workflows etc.
+
+#### Setup
+
+- [Create a new app](https://docs.github.com/en/developers/apps/creating-a-github-app)
+- Configure the app permissions and your renovate.js as described in the [Renovate documentation](https://docs.renovatebot.com/modules/platform/github/#running-as-a-github-app).
+- Add an empty-but-valid (`{}`)`renovate.json` to the default branch of your repo.
+- Add this workflow in a PR.
+- Look at the log output and adjust the config as needed.
 
 ```yaml
 name: renovate
 on:
   push:
     branches:
-      - master
+      - main
+  pull_request:
   workflow_dispatch: {}
   schedule:
     - cron:  '0 */6 * * *'
 jobs:
   renovate:
+    name: Update
+    if: github.event_name != 'pull_request'
     uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
     with:
       renovate_app_slug: your-app-name
+    secrets:
+      RENOVATE_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
+      RENOVATE_APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}
+
+  validate:
+    name: Validate
+    if: github.event_name == 'pull_request'
+    uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
+    with:
+      renovate_app_slug: your-app-name
+      dry_run_branch: ${{ github.event.pull_request.head.ref }}
     secrets:
       RENOVATE_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
       RENOVATE_APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}

@@ -11,6 +11,14 @@ on:
       RENOVATE_APP_ID:
         required: true
     inputs:
+      dry_run_branch:
+        description: |
+          Validate the config on this branch, merged on top of the config from the default branch.
+          Requires that config be in the same location on each branch.
+          Requires that config be stored in a default configuration location.
+          https://docs.renovatebot.com/configuration-options/#configuration-options
+        required: false
+        type: string
       renovate_app_slug:
         required: true
         type: string
@@ -22,18 +30,21 @@ on:
     - cron: '0 */4 * * *'
 jobs:
   renovate:
+    name: ${{ inputs.dry_run_branch == '' && 'Update' || 'Validate' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Get token
-        id: get_token
-        uses: machine-learning-apps/actions-app-token@master
+        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92 # v1.8.0
+        id: token
         with:
-          APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}
-          APP_ID: ${{ secrets.RENOVATE_APP_ID }}
+          app_id: ${{ secrets.RENOVATE_APP_ID }}
+          private_key: ${{ secrets.RENOVATE_APP_PEM }}
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+    
       - name: Renovate
+        if: inputs.dry_run_branch == ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
         env:
           LOG_LEVEL: 'debug'
@@ -42,10 +53,32 @@ jobs:
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]
           RENOVATE_GIT_AUTHOR: >-
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
-          GITHUB_COM_TOKEN: '${{ steps.get_token.outputs.app_token }}'
-          RENOVATE_GITHUB_COM_TOKEN: '${{ steps.get_token.outputs.app_token }}'
+          GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
+          RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
           RENOVATE_REQUIRE_CONFIG: 'false'
           RENOVATE_ONBOARDING: 'false'
         with:
           configurationFile: ${{ inputs.configuration_file }}
-          token: 'x-access-token:${{ steps.get_token.outputs.app_token }}'
+          token: 'x-access-token:${{ steps.token.outputs.token }}'
+
+      - name: Dry run
+        if: inputs.dry_run_branch != ''
+        uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
+        env:
+          LOG_LEVEL: 'debug'
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_USERNAME: >-
+            ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]
+          RENOVATE_GIT_AUTHOR: >-
+            ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
+          GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
+          RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
+          RENOVATE_REQUIRE_CONFIG: 'false'
+          RENOVATE_ONBOARDING: 'false'
+          LOG_FORMAT: 'json'
+          RENOVATE_DRY_RUN: 'full'
+          RENOVATE_BASE_BRANCHES: ${{ inputs.dry_run_branch == '' && github.ref_name || inputs.dry_run_branch }}
+          RENOVATE_USE_BASE_BRANCH_CONFIG: merge
+        with:
+          configurationFile: ${{ inputs.configuration_file }}
+          token: 'x-access-token:${{ steps.token.outputs.token }}'
