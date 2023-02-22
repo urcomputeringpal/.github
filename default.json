@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "default renovate rules from https://github.com/urcomputeringpal/.github/blob/main/default.json",
+  "description": "Software update configuration curated by @urcomputeringpal. From https://github.com/urcomputeringpal/.github/blob/main/default.json",
   "extends": [
     "config:base",
     ":automergeDisabled",
@@ -24,7 +24,7 @@
   "labels": ["renovate", "{{datasource}}"],
   "rebaseWhen": "conflicted",
   "prFooter": "",
-  "prHeader": "Greetings. Auto-update behavior is configured via `renovate.js` in this repo, which inherits defaults from the `.github` repo in this account.",
+  "prHeader": "Greetings. Auto-update behavior is configured via `renovate.js` and `renovate.json` in this repo. Defaults are inherited from https://github.com/urcomputeringpal/.github",
   "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
   "packageRules": [
     {
