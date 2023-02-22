@@ -38,9 +38,7 @@ Like dependabot, but customizable. Requires a private GitHub App be installed to
 
 - [Create a new app](https://docs.github.com/en/developers/apps/creating-a-github-app)
 - Configure the app permissions and your renovate.js as described in the [Renovate documentation](https://docs.renovatebot.com/modules/platform/github/#running-as-a-github-app).
-- Add an empty-but-valid (`{}`)`renovate.json` to the default branch of your repo.
-- Add this workflow in a PR.
-- Look at the log output and adjust the config as needed.
+- Add this workflow in a PR. Once merged, Renovate will open an onboarding PR that explains what Renovate will do and how to configure it.
 
 ```yaml
 name: renovate
@@ -60,7 +58,7 @@ jobs:
     uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
     with:
       renovate_app_slug: your-app-name
-      onboarding: 'true' # Disable if you'll be configuring renovate.json yourself.
+      onboarding: 'true'
     secrets:
       RENOVATE_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
       RENOVATE_APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}
