@@ -1,9 +1,5 @@
 name: Renovate
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
   workflow_call:
     secrets:
       RENOVATE_APP_PEM:
@@ -31,8 +27,6 @@ on:
         required: false
         type: string
         default: renovate.js
-  schedule:
-    - cron: '0 */4 * * *'
 jobs:
   renovate:
     name: ${{ inputs.dry_run_branch == '' && 'Update' || 'Validate' }}
