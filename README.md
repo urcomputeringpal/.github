@@ -48,6 +48,7 @@ on:
   push:
     branches:
       - main
+      - renovate/configure
   pull_request:
   workflow_dispatch: {}
   schedule:
@@ -59,6 +60,7 @@ jobs:
     uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
     with:
       renovate_app_slug: your-app-name
+      onboarding: 'true' # Disable if you'll be configuring renovate.json yourself.
     secrets:
       RENOVATE_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
       RENOVATE_APP_PEM: ${{ secrets.RENOVATE_APP_PEM }}

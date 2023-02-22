@@ -1,10 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Software update configuration curated by @urcomputeringpal. From https://github.com/urcomputeringpal/.github/blob/main/default.json",
+  "description": "Reasonable software update defaults curated by @urcomputeringpal. From https://github.com/urcomputeringpal/.github/blob/main/default.json",
   "extends": [
-    "config:base",
+    ":autodetectRangeStrategy",
+    "group:monorepos",
+    "group:recommended",
+    "workarounds:all",
     ":automergeDisabled",
-    ":disableDependencyDashboard",
     ":maintainLockFilesWeekly",
     ":semanticCommits",
     ":semanticCommitScope(deps)",
@@ -13,18 +15,15 @@
     "group:linters",
     "helpers:pinGitHubActionDigests",
     "preview:dockerCompose",
-    "preview:dockerVersions",
-    ":prHourlyLimitNone",
-    ":prConcurrentLimitNone"
+    "preview:dockerVersions"
   ],
-  "ignorePresets": [":ignoreModulesAndTests"],
   "pin": {
     "automerge": false
   },
   "labels": ["renovate", "{{datasource}}"],
   "rebaseWhen": "conflicted",
-  "prFooter": "",
-  "prHeader": "Greetings. Auto-update behavior is configured via `renovate.js` and `renovate.json` in this repo. Defaults are inherited from https://github.com/urcomputeringpal/.github",
+  "prHeader": "Greetings. Renovate would like you to know that there's an update available for your consideration.",
+  "prFooter": "### Configuring renovate\n\n* [Repository config](https://docs.renovatebot.com/configuration-options/) is loaded from `renovate.json` on the default branch.\n* Defaults are inherited from [`urcomputeringpal/.github`](https://github.com/urcomputeringpal/.github/blob/main/default.json) and optionally at the [organization level](https://docs.renovatebot.com/config-presets/#organization-level-presets).\n* Optional [self-hosted configuration](https://docs.renovatebot.com/self-hosted-configuration/) is loaded from `renovate.js` on the default branch.\n* Changes to configuration pushed to this pull request will be processed with a dry run of Renovate. Inspect the logs to validate if the changes have had the desired effect, then merge to apply them.",
   "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{changelogs}}}{{{controls}}}{{{footer}}}",
   "packageRules": [
     {
