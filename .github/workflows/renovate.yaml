@@ -77,9 +77,15 @@ jobs:
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
           GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
           RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_REQUIRE_CONFIG: 'optional'
+          RENOVATE_REQUIRE_CONFIG: >-
+            ${{ inputs.onboarding == 'false' && 'optional' || 'required' }}
           RENOVATE_ONBOARDING: >-
             ${{ inputs.onboarding || 'false' }}
+          RENOVATE_ONBOARDING_CONFIG: |
+            {
+              "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+              "extends": ["github>urcomputeringpal/.github"],
+            }
         with:
           configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
