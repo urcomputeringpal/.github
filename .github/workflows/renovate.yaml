@@ -45,9 +45,26 @@ jobs:
         with:
           app_id: ${{ secrets.RENOVATE_APP_ID }}
           private_key: ${{ secrets.RENOVATE_APP_PEM }}
+
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
     
+      - name: Detect configuration
+        id: config
+        env:
+          config_file: ${{ inputs.configuration_file }}
+        run: |
+          if [ -f "$config_file" ]; then
+            echo "Using Renovate self-hosted config in $config_file."
+            echo "https://docs.renovatebot.com/self-hosted-configuration/"
+            echo "file=$config_file" >> $GITHUB_OUTPUT
+          else
+            echo "No Renovate self-hosted config found in $config_file". Using empty config.
+            echo "https://docs.renovatebot.com/self-hosted-configuration/"
+            echo "module.exports = {};" > renovate.js
+            echo "file=renovate.js" >> $GITHUB_OUTPUT
+          fi
+
       - name: Renovate
         if: inputs.dry_run_branch == ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
@@ -64,7 +81,7 @@ jobs:
           RENOVATE_ONBOARDING: >-
             ${{ inputs.onboarding || 'false' }}
         with:
-          configurationFile: ${{ inputs.configuration_file }}
+          configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
 
       - name: Dry run
@@ -86,5 +103,5 @@ jobs:
           RENOVATE_BASE_BRANCHES: ${{ inputs.dry_run_branch == '' && github.ref_name || inputs.dry_run_branch }}
           RENOVATE_USE_BASE_BRANCH_CONFIG: merge
         with:
-          configurationFile: ${{ inputs.configuration_file }}
+          configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
