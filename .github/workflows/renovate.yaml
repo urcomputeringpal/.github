@@ -49,7 +49,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
     
-      - name: Detect configuration
+      - name: Detect optional self-hosted configuration
         id: config
         env:
           config_file: ${{ inputs.configuration_file }}
@@ -81,6 +81,7 @@ jobs:
             ${{ inputs.onboarding == 'false' && 'optional' || 'required' }}
           RENOVATE_ONBOARDING: >-
             ${{ inputs.onboarding || 'false' }}
+          RENOVATE_ONBOARDING_CONFIG_FILE_NAME: renovate.json
           RENOVATE_ONBOARDING_CONFIG: |
             {
               "$schema": "https://docs.renovatebot.com/renovate-schema.json",
@@ -90,8 +91,28 @@ jobs:
           configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
 
-      - name: Dry run
+      - name: Inspect configuration on default branch
         if: inputs.dry_run_branch != ''
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+        with:
+          path: default_branch
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Detect default branch repository configuration
+        if: inputs.dry_run_branch != ''
+        id: default_branch_repo_config
+        run: |
+          if [ -f default_branch/renovate.json ]; then
+            echo "Renovate config detected on default branch."
+            echo "file=renovate.json" >> $GITHUB_OUTPUT
+          else
+            echo "No renovate config detected on default branch."
+            echo "file=" >> $GITHUB_OUTPUT
+          fi
+          rm -rf default_branch
+
+      - name: Dry run
+        if: inputs.dry_run_branch != '' && steps.default_branch_repo_config.outputs.file != ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
         env:
           LOG_LEVEL: 'debug'
