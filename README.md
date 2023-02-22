@@ -32,7 +32,7 @@ jobs:
 
 ### Renovate
 
-Like dependabot, but customizable. Requires a private GitHub App be installed to grant the permissions necessary to update Actions workflows etc.
+Like dependabot, but customizable. This workflow wraps https://github.com/renovatebot/github-action with some curated defaults. Requires a private GitHub App be installed to grant the permissions necessary to update Actions workflows etc.
 
 #### Setup
 
