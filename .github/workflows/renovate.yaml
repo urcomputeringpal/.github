@@ -19,6 +19,11 @@ on:
           https://docs.renovatebot.com/configuration-options/#configuration-options
         required: false
         type: string
+      onboarding:
+        description: Require a Configuration PR to setup renovate.json.
+        required: false
+        type: string
+        default: 'false'
       renovate_app_slug:
         required: true
         type: string
@@ -40,9 +45,26 @@ jobs:
         with:
           app_id: ${{ secrets.RENOVATE_APP_ID }}
           private_key: ${{ secrets.RENOVATE_APP_PEM }}
+
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
     
+      - name: Detect optional self-hosted configuration
+        id: config
+        env:
+          config_file: ${{ inputs.configuration_file }}
+        run: |
+          if [ -f "$config_file" ]; then
+            echo "Using Renovate self-hosted config in $config_file."
+            echo "https://docs.renovatebot.com/self-hosted-configuration/"
+            echo "file=$config_file" >> $GITHUB_OUTPUT
+          else
+            echo "No Renovate self-hosted config found in $config_file". Using empty config.
+            echo "https://docs.renovatebot.com/self-hosted-configuration/"
+            echo "module.exports = {};" > renovate.js
+            echo "file=renovate.js" >> $GITHUB_OUTPUT
+          fi
+
       - name: Renovate
         if: inputs.dry_run_branch == ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
@@ -55,14 +77,42 @@ jobs:
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
           GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
           RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_REQUIRE_CONFIG: 'false'
-          RENOVATE_ONBOARDING: 'false'
+          RENOVATE_REQUIRE_CONFIG: >-
+            ${{ inputs.onboarding == 'false' && 'optional' || 'required' }}
+          RENOVATE_ONBOARDING: >-
+            ${{ inputs.onboarding || 'false' }}
+          RENOVATE_ONBOARDING_CONFIG_FILE_NAME: renovate.json
+          RENOVATE_ONBOARDING_CONFIG: |
+            {
+              "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+              "extends": ["github>urcomputeringpal/.github"],
+            }
         with:
-          configurationFile: ${{ inputs.configuration_file }}
+          configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
 
-      - name: Dry run
+      - name: Inspect configuration on default branch
         if: inputs.dry_run_branch != ''
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+        with:
+          path: default_branch
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Detect default branch repository configuration
+        if: inputs.dry_run_branch != ''
+        id: default_branch_repo_config
+        run: |
+          if [ -f default_branch/renovate.json ]; then
+            echo "Renovate config detected on default branch."
+            echo "file=renovate.json" >> $GITHUB_OUTPUT
+          else
+            echo "No renovate config detected on default branch."
+            echo "file=" >> $GITHUB_OUTPUT
+          fi
+          rm -rf default_branch
+
+      - name: Dry run
+        if: inputs.dry_run_branch != '' && steps.default_branch_repo_config.outputs.file != ''
         uses: renovatebot/github-action@78179592fbdafad8276d547ce30a1e7b63cf395e # v34.145.1
         env:
           LOG_LEVEL: 'debug'
@@ -73,12 +123,12 @@ jobs:
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
           GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
           RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_REQUIRE_CONFIG: 'false'
+          RENOVATE_REQUIRE_CONFIG: 'optional'
           RENOVATE_ONBOARDING: 'false'
           LOG_FORMAT: 'json'
           RENOVATE_DRY_RUN: 'full'
           RENOVATE_BASE_BRANCHES: ${{ inputs.dry_run_branch == '' && github.ref_name || inputs.dry_run_branch }}
           RENOVATE_USE_BASE_BRANCH_CONFIG: merge
         with:
-          configurationFile: ${{ inputs.configuration_file }}
+          configurationFile: '${{ steps.config.outputs.file }}'
           token: 'x-access-token:${{ steps.token.outputs.token }}'
