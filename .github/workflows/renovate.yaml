@@ -19,7 +19,7 @@ on:
         description: Require a Configuration PR to setup renovate.json.
         required: false
         type: string
-        default: 'false'
+        default: "false"
       renovate_app_slug:
         required: true
         type: string
@@ -42,7 +42,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
-    
+
       - name: Detect optional self-hosted configuration
         id: config
         env:
@@ -61,16 +61,16 @@ jobs:
 
       - name: Renovate
         if: inputs.dry_run_branch == ''
-        uses: renovatebot/github-action@927d318430b8127887559d9721fdfcaaa4646fb9 # v35.2.0
+        uses: renovatebot/github-action@2529763aa12e6d5b445bc911e8bd8cce2a4f205c # v36.0.1
         env:
-          LOG_LEVEL: 'debug'
+          LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_USERNAME: >-
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]
           RENOVATE_GIT_AUTHOR: >-
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
-          GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
+          GITHUB_COM_TOKEN: "${{ steps.token.outputs.token }}"
+          RENOVATE_GITHUB_COM_TOKEN: "${{ steps.token.outputs.token }}"
           RENOVATE_REQUIRE_CONFIG: >-
             ${{ inputs.onboarding == 'false' && 'optional' || 'required' }}
           RENOVATE_ONBOARDING: >-
@@ -82,8 +82,10 @@ jobs:
               "extends": ["github>urcomputeringpal/.github"],
             }
         with:
-          configurationFile: '${{ steps.config.outputs.file }}'
-          token: 'x-access-token:${{ steps.token.outputs.token }}'
+          # renovate: datasource=github-releases depName=renovatebot/renovate
+          renovate-version: 35.17.0
+          configurationFile: "${{ steps.config.outputs.file }}"
+          token: "x-access-token:${{ steps.token.outputs.token }}"
 
       - name: Inspect configuration on default branch
         if: inputs.dry_run_branch != ''
@@ -107,22 +109,24 @@ jobs:
 
       - name: Dry run
         if: inputs.dry_run_branch != '' && steps.default_branch_repo_config.outputs.file != ''
-        uses: renovatebot/github-action@927d318430b8127887559d9721fdfcaaa4646fb9 # v35.2.0
+        uses: renovatebot/github-action@2529763aa12e6d5b445bc911e8bd8cce2a4f205c # v36.0.1
         env:
-          LOG_LEVEL: 'debug'
+          LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_USERNAME: >-
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]
           RENOVATE_GIT_AUTHOR: >-
             ${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }} <${{ secrets.RENOVATE_APP_ID }}+${{ inputs.renovate_app_slug == '' && 'ur-renovate' || inputs.renovate_app_slug }}[bot]@users.noreply.github.com>
-          GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_GITHUB_COM_TOKEN: '${{ steps.token.outputs.token }}'
-          RENOVATE_REQUIRE_CONFIG: 'optional'
-          RENOVATE_ONBOARDING: 'false'
-          LOG_FORMAT: 'json'
-          RENOVATE_DRY_RUN: 'full'
+          GITHUB_COM_TOKEN: "${{ steps.token.outputs.token }}"
+          RENOVATE_GITHUB_COM_TOKEN: "${{ steps.token.outputs.token }}"
+          RENOVATE_REQUIRE_CONFIG: "optional"
+          RENOVATE_ONBOARDING: "false"
+          LOG_FORMAT: "json"
+          RENOVATE_DRY_RUN: "full"
           RENOVATE_BASE_BRANCHES: ${{ inputs.dry_run_branch == '' && github.ref_name || inputs.dry_run_branch }}
           RENOVATE_USE_BASE_BRANCH_CONFIG: merge
         with:
-          configurationFile: '${{ steps.config.outputs.file }}'
-          token: 'x-access-token:${{ steps.token.outputs.token }}'
+          # renovate: datasource=github-releases depName=renovatebot/renovate
+          renovate-version: 35.17.0
+          configurationFile: "${{ steps.config.outputs.file }}"
+          token: "x-access-token:${{ steps.token.outputs.token }}"

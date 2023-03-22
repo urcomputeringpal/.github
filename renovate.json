@@ -4,7 +4,10 @@
   "packageRules": [
     {
       "description": "Update the Renovate GitHub action weekly",
-      "packageNames": "renovatebot/github-action",
+      "matchPackageNames": [
+        "renovatebot/renovate",
+        "renovatebot/github-action"
+      ],
       "extends": ["schedule:weekly"]
     }
   ]
