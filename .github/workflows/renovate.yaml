@@ -83,7 +83,7 @@ jobs:
             }
         with:
           # renovate: datasource=github-releases depName=renovatebot/renovate
-          renovate-version: 35.58.2
+          renovate-version: 35.68.0
           configurationFile: "${{ steps.config.outputs.file }}"
           token: "x-access-token:${{ steps.token.outputs.token }}"
 
@@ -127,6 +127,6 @@ jobs:
           RENOVATE_USE_BASE_BRANCH_CONFIG: merge
         with:
           # renovate: datasource=github-releases depName=renovatebot/renovate
-          renovate-version: 35.58.2
+          renovate-version: 35.68.0
           configurationFile: "${{ steps.config.outputs.file }}"
           token: "x-access-token:${{ steps.token.outputs.token }}"
