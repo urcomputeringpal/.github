@@ -12,7 +12,7 @@ jobs:
   renovate:
     name: Update
     if: github.event_name != 'pull_request'
-    uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
+    uses: ./.github/workflows/renovate.yaml
     with:
       renovate_app_slug: ur-renovate
       onboarding: 'true'
@@ -23,7 +23,7 @@ jobs:
   validate:
     name: Validate
     if: github.event_name == 'pull_request'
-    uses: urcomputeringpal/.github/.github/workflows/renovate.yaml@main
+    uses: ./.github/workflows/renovate.yaml
     with:
       renovate_app_slug: ur-renovate
       dry_run_branch: ${{ github.event.pull_request.head.ref }}
