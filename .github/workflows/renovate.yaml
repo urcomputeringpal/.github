@@ -27,6 +27,12 @@ on:
         required: false
         type: string
         default: renovate.js
+      full:
+        description: Use full image
+        required: false
+        type: boolean
+        default: false
+  
 jobs:
   renovate:
     name: ${{ inputs.dry_run_branch == '' && 'Update' || 'Validate' }}
@@ -43,7 +49,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
 
-      - name: Detect optional self-hosted configuration
+      - name: Detect config
         id: config
         env:
           config_file: ${{ inputs.configuration_file }}
@@ -57,6 +63,19 @@ jobs:
             echo "https://docs.renovatebot.com/self-hosted-configuration/"
             echo "module.exports = {};" > renovate.js
             echo "file=renovate.js" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure version
+        id: version
+        env:
+          # renovate: datasource=github-releases depName=renovatebot/renovate
+          version: 36.107.1
+          full: ${{ inputs.full }}
+        run: |
+          if [ "${full}" = "true" ]; then
+            echo "version=${version}-full" >> $GITHUB_OUTPUT
+          else
+            echo "version=${version}" >> $GITHUB_OUTPUT
           fi
 
       - name: Renovate
@@ -82,8 +101,7 @@ jobs:
               "extends": ["github>urcomputeringpal/.github"],
             }
         with:
-          # renovate: datasource=github-releases depName=renovatebot/renovate
-          renovate-version: 36.107.1
+          renovate-version: "${{ steps.version.outputs.version }}"
           configurationFile: "${{ steps.config.outputs.file }}"
           token: "x-access-token:${{ steps.token.outputs.token }}"
 
@@ -126,7 +144,6 @@ jobs:
           RENOVATE_BASE_BRANCHES: ${{ inputs.dry_run_branch == '' && github.ref_name || inputs.dry_run_branch }}
           RENOVATE_USE_BASE_BRANCH_CONFIG: merge
         with:
-          # renovate: datasource=github-releases depName=renovatebot/renovate
-          renovate-version: 36.107.1
+          renovate-version: "${{ steps.version.outputs.version }}"
           configurationFile: "${{ steps.config.outputs.file }}"
           token: "x-access-token:${{ steps.token.outputs.token }}"
