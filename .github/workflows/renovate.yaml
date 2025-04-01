@@ -69,7 +69,7 @@ jobs:
         id: version
         env:
           # renovate: datasource=github-releases depName=renovatebot/renovate
-          version: 37.171.2
+          version: 39.182.3
           full: ${{ inputs.full }}
         run: |
           if [ "${full}" = "true" ]; then
@@ -80,7 +80,7 @@ jobs:
 
       - name: Renovate
         if: inputs.dry_run_branch == ''
-        uses: renovatebot/github-action@42c1d3cb1d1ca891765626ba71cdff5e757258de # v40.0.2
+        uses: renovatebot/github-action@02f4fdeb479bbb229caa7ad82cb5e691c07e80b3 # v41.0.14
         env:
           LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
@@ -127,7 +127,7 @@ jobs:
 
       - name: Dry run
         if: inputs.dry_run_branch != '' && steps.default_branch_repo_config.outputs.file != ''
-        uses: renovatebot/github-action@42c1d3cb1d1ca891765626ba71cdff5e757258de # v40.0.2
+        uses: renovatebot/github-action@02f4fdeb479bbb229caa7ad82cb5e691c07e80b3 # v41.0.14
         env:
           LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
