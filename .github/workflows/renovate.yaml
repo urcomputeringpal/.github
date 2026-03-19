@@ -80,7 +80,7 @@ jobs:
 
       - name: Renovate
         if: inputs.dry_run_branch == ''
-        uses: renovatebot/github-action@8ac70de2fe55752c573155866e30735411e3b61c # v41.0.22
+        uses: renovatebot/github-action@abd08c7549b2a864af5df4a2e369c43f035a6a9d # v46.1.5
         env:
           LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
@@ -127,7 +127,7 @@ jobs:
 
       - name: Dry run
         if: inputs.dry_run_branch != '' && steps.default_branch_repo_config.outputs.file != ''
-        uses: renovatebot/github-action@8ac70de2fe55752c573155866e30735411e3b61c # v41.0.22
+        uses: renovatebot/github-action@abd08c7549b2a864af5df4a2e369c43f035a6a9d # v46.1.5
         env:
           LOG_LEVEL: "debug"
           RENOVATE_REPOSITORIES: ${{ github.repository }}
