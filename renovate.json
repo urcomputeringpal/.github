@@ -1,15 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>urcomputeringpal/.github"],
-  "prHourlyLimit": 10,
-  "packageRules": [
-    {
-      "description": "Update the Renovate GitHub action weekly",
-      "matchPackageNames": [
-        "renovatebot/renovate",
-        "renovatebot/github-action"
-      ],
-      "extends": ["schedule:weekly"]
-    }
-  ]
+  "prHourlyLimit": 10
 }
