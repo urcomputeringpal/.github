@@ -2,7 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "gitIgnoredAuthors": [
     "ur-renovate[bot]@users.noreply.github.com",
-    "ur-renovate@users.noreply.github.com"
+    "ur-renovate@users.noreply.github.com",
+    "121888725+ur-renovate[bot]@users.noreply.github.com"
   ],
   "description": "Reasonable software update defaults curated by @urcomputeringpal. From https://github.com/urcomputeringpal/.github/blob/main/default.json",
   "extends": [
