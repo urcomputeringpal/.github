@@ -78,8 +78,10 @@
     {
       "fileMatch": [".+"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_(v|V)(ersion|ERSION|alue|ALUE)(:|=)\"?(?<currentValue>.+?)\"?\\s",
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*_?(v|V)(ersion|ERSION|alue|ALUE)(:|=) ?(?<currentValue>.*)\\s"
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_(v|V)(ersion|ERSION|alue|ALUE)\\s*[:=]\\s*[\"']\\s*(?<currentValue>[^\"'\\r\\n]+?)\\s*[\"']",
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_(v|V)(ersion|ERSION|alue|ALUE)\\s*[:=]\\s*(?<currentValue>[^\"'\\s]+)",
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*_?(v|V)(ersion|ERSION|alue|ALUE)\\s*[:=]\\s*[\"']\\s*(?<currentValue>[^\"'\\r\\n]+?)\\s*[\"']",
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*_?(v|V)(ersion|ERSION|alue|ALUE)\\s*[:=]\\s*(?<currentValue>[^\"'\\s]+)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
