@@ -25,12 +25,12 @@ jobs:
     name: Enable auto-merge
     runs-on: ubuntu-latest
     steps:
-      - uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         if: ${{ inputs.use_app_token }}
         id: token
         with:
-          app_id: ${{ secrets.app_id }}
-          private_key: ${{ secrets.private_key }}
+          client-id: ${{ secrets.app_id }}
+          private-key: ${{ secrets.private_key }}
 
       - uses: octokit/graphql-action@ddde8ebb2493e79f390e6449c725c21663a67505 # v3.0.2
         id: enablePullRequestAutoMerge

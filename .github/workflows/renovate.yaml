@@ -32,7 +32,7 @@ on:
         required: false
         type: boolean
         default: false
-  
+
 jobs:
   renovate:
     name: ${{ inputs.dry_run_branch == '' && 'Update' || 'Validate' }}
@@ -40,11 +40,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Get token
-        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: token
         with:
-          app_id: ${{ secrets.RENOVATE_APP_ID }}
-          private_key: ${{ secrets.RENOVATE_APP_PEM }}
+          client-id: ${{ secrets.app_id }}
+          private-key: ${{ secrets.private_key }}
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
