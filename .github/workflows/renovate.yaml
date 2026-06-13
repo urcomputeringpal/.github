@@ -100,7 +100,7 @@ jobs:
         id: version
         env:
           # renovate: datasource=github-releases depName=renovatebot/renovate
-          version: 43.159.2
+          version: 43.220.0
           full: ${{ inputs.full }}
         run: |
           if [ "${full}" = "true" ]; then
