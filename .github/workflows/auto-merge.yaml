@@ -13,6 +13,11 @@ on:
       use_app_token:
         type: boolean
         default: false
+      decode_app_pem_base64:
+        description: Decode private_key as base64 before use.
+        required: false
+        type: boolean
+        default: true
     secrets:
       token:
         required: false
@@ -25,12 +30,40 @@ jobs:
     name: Enable auto-merge
     runs-on: ubuntu-latest
     steps:
+      - name: Decode the GitHub App Private Key
+        if: ${{ inputs.use_app_token }}
+        id: decode
+        env:
+          decode_base64: ${{ inputs.decode_app_pem_base64 }}
+          app_pem: ${{ secrets.private_key }}
+        run: |
+          if [ "${decode_base64}" = "true" ]; then
+            private_key=$(echo "${app_pem}" | base64 -d | awk 'BEGIN {ORS="\\n"} {print}' | head -c -2)
+          else
+            private_key="${app_pem}"
+          fi
+
+          echo "::add-mask::$private_key"
+          {
+            echo "private-key<<EOF"
+            echo "$private_key"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Describe the GitHub App Private Key
+        if: ${{ inputs.use_app_token }}
+        env:
+          private_key: ${{ steps.decode.outputs.private-key }}
+        run: |
+          echo "bytes=${#private_key}"
+          echo "lines=$(wc -l <<< "${private_key}" | tr -d ' ')"
+
       - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         if: ${{ inputs.use_app_token }}
         id: token
         with:
           client-id: ${{ secrets.app_id }}
-          private-key: ${{ secrets.private_key }}
+          private-key: ${{ steps.decode.outputs.private-key }}
 
       - uses: octokit/graphql-action@ddde8ebb2493e79f390e6449c725c21663a67505 # v3.0.2
         id: enablePullRequestAutoMerge
