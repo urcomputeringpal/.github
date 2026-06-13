@@ -63,6 +63,13 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Describe the GitHub App Private Key
+        env:
+          private_key: ${{ steps.decode.outputs.private-key }}
+        run: |
+          echo "bytes=${#private_key}"
+          echo "lines=$(wc -l <<< "${private_key}" | tr -d ' ')"
+
       - name: Get token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: token
