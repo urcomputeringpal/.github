@@ -14,3 +14,4 @@ jobs:
     uses: ./.github/workflows/auto-merge.yaml
     with:
       pullRequestId: ${{ github.event.pull_request.node_id }}
+      pullRequestNumber: ${{ github.event.pull_request.number }}
