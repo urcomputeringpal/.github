@@ -6,6 +6,10 @@ on:
         description: node ID of the PR to update
         required: true
         type: string
+      pullRequestNumber:
+        description: PR number to update before enabling auto-merge
+        required: false
+        type: number
       mergeMethod:
         description: one of https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
         default: SQUASH
@@ -64,6 +68,38 @@ jobs:
         with:
           client-id: ${{ secrets.app_id }}
           private-key: ${{ steps.decode.outputs.private-key }}
+
+      - name: Update branch
+        if: ${{ inputs.pullRequestNumber }}
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          PULL_NUMBER: ${{ inputs.pullRequestNumber }}
+          REF: heads/${{ github.event.repository.default_branch }}
+        with:
+          github-token: ${{ secrets.token || steps.token.outputs.token || github.token }}
+          script: |
+            const defaultBranchHead = await github.rest.git.getRef({
+              ...context.repo,
+              ref: process.env.REF
+            })
+            const pull = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: process.env.PULL_NUMBER
+            })
+
+            if (
+              pull.data.mergeable_state === 'behind' ||
+              defaultBranchHead.data.object.sha !== pull.data.base.sha
+            ) {
+              const updateBranch = await github.rest.pulls.updateBranch({
+                ...context.repo,
+                pull_number: process.env.PULL_NUMBER,
+                expected_head_sha: pull.data.head.sha
+              })
+              console.log(updateBranch.data)
+            } else {
+              console.log(`PR #${process.env.PULL_NUMBER} is already up to date`)
+            }
 
       - uses: octokit/graphql-action@ddde8ebb2493e79f390e6449c725c21663a67505 # v3.0.2
         id: enablePullRequestAutoMerge
